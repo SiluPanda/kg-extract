@@ -3,6 +3,7 @@
 Extract entity-relationship triples from unstructured text and build queryable in-memory knowledge graphs.
 
 [![npm version](https://img.shields.io/npm/v/kg-extract.svg)](https://www.npmjs.com/package/kg-extract)
+[![npm downloads](https://img.shields.io/npm/dt/kg-extract.svg)](https://www.npmjs.com/package/kg-extract)
 [![license](https://img.shields.io/npm/l/kg-extract.svg)](https://github.com/SiluPanda/kg-extract/blob/master/LICENSE)
 [![node](https://img.shields.io/node/v/kg-extract.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org/)
