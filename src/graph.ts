@@ -18,6 +18,12 @@ export class KnowledgeGraph {
   }
 
   addTriple(triple: Triple): void {
+    const isDuplicate = this._triples.some(t =>
+      t.subject === triple.subject &&
+      t.predicate === triple.predicate &&
+      t.object === triple.object
+    )
+    if (isDuplicate) return
     this._triples.push(triple)
     // Ensure entities exist
     if (!this.entityMap.has(triple.subject.toLowerCase())) {
@@ -37,7 +43,7 @@ export class KnowledgeGraph {
   query(subject?: string, predicate?: string, object?: string): Triple[] {
     return this._triples.filter(t =>
       (!subject || t.subject.toLowerCase() === subject.toLowerCase()) &&
-      (!predicate || t.predicate === predicate) &&
+      (!predicate || t.predicate.toLowerCase() === predicate.toLowerCase()) &&
       (!object || t.object.toLowerCase() === object.toLowerCase())
     )
   }

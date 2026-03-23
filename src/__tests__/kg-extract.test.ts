@@ -32,6 +32,12 @@ describe('parseEntities', () => {
   it('returns empty array for empty output', () => {
     expect(parseEntities('')).toEqual([])
   })
+
+  it('rejects entities with whitespace-only names or types', () => {
+    const output = 'ENTITY:   | Person |\nENTITY: Alice |   |'
+    const entities = parseEntities(output)
+    expect(entities).toHaveLength(0)
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -70,6 +76,13 @@ describe('parseTriples', () => {
 
   it('returns empty array for empty output', () => {
     expect(parseTriples('', 0.3)).toEqual([])
+  })
+
+  it('rejects triples with confidence > 1.0', () => {
+    const output = 'TRIPLE: Alice | works_at | Acme | 1.5\nTRIPLE: Bob | works_at | Acme | 0.9'
+    const triples = parseTriples(output, 0.3)
+    expect(triples).toHaveLength(1)
+    expect(triples[0].subject).toBe('Bob')
   })
 })
 
@@ -256,6 +269,19 @@ describe('KnowledgeGraph', () => {
     expect(names).toContain('Acme Corp')
     expect(names).toContain('Bob')
     expect(names).not.toContain('Alice')
+  })
+
+  it('deduplicates identical triples', () => {
+    kg.addTriple({ subject: 'Alice', predicate: 'works_at', object: 'Acme Corp', confidence: 0.9 })
+    kg.addTriple({ subject: 'Alice', predicate: 'works_at', object: 'Acme Corp', confidence: 0.95 })
+    expect(kg.stats().edgeCount).toBe(1)
+    expect(kg.query('Alice', 'works_at')).toHaveLength(1)
+  })
+
+  it('query matches predicates case-insensitively', () => {
+    kg.addTriple({ subject: 'Alice', predicate: 'works_at', object: 'Acme Corp', confidence: 0.9 })
+    expect(kg.query(undefined, 'Works_At')).toHaveLength(1)
+    expect(kg.query(undefined, 'WORKS_AT')).toHaveLength(1)
   })
 })
 

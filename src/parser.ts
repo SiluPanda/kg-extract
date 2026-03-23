@@ -7,7 +7,9 @@ export function parseEntities(llmOutput: string): Entity[] {
     if (!match) continue
     const [, name, type, aliasStr] = match
     const aliases = aliasStr ? aliasStr.split(',').map(a => a.trim()).filter(Boolean) : []
-    if (name && type) entities.push({ name: name.trim(), type: type.trim(), aliases })
+    const trimmedName = name.trim()
+    const trimmedType = type.trim()
+    if (trimmedName && trimmedType) entities.push({ name: trimmedName, type: trimmedType, aliases })
   }
   return entities
 }
@@ -19,7 +21,7 @@ export function parseTriples(llmOutput: string, minConfidence: number): Triple[]
     if (!match) continue
     const [, subject, predicate, object, confStr] = match
     const confidence = parseFloat(confStr)
-    if (isNaN(confidence) || confidence < minConfidence) continue
+    if (isNaN(confidence) || confidence < minConfidence || confidence > 1.0) continue
     if (subject && predicate && object) {
       triples.push({
         subject: subject.trim(),
